@@ -6,6 +6,7 @@ public class LogicaPersonaje1 : MonoBehaviour
 {
     public float velocidadMovimiento = 5.0f;
     public float velocidadRotacion = 200.0f;
+    public Transform objetivoEsferas; // El personaje al que deben huir las esferas
 
     private Animator anim;
     public float x, y;
@@ -16,7 +17,7 @@ public class LogicaPersonaje1 : MonoBehaviour
 
     public float velocidadInicial;
     public float velocidadAgachado;
-    // Start is called before the first frame update
+
     void Start()
     {
         puedoSaltar = false;
@@ -24,19 +25,21 @@ public class LogicaPersonaje1 : MonoBehaviour
 
         velocidadInicial = velocidadMovimiento;
         velocidadAgachado = velocidadMovimiento = 0.5f;
+
+        // Asigna el objetivo a las esferas
+        AsignarObjetivoEsferas();
     }
+
     void FixedUpdate()
     {
         transform.Rotate(0, x * Time.deltaTime * velocidadRotacion, 0);
         transform.Translate(0, 0, y * Time.deltaTime * velocidadMovimiento);
     }
 
-    // Update is called once per frame
     void Update()
     {
         x = Input.GetAxis("Horizontal");
         y = Input.GetAxis("Vertical");
-
 
         anim.SetFloat("VelX", x);
         anim.SetFloat("VelY", y);
@@ -60,15 +63,24 @@ public class LogicaPersonaje1 : MonoBehaviour
             }
             anim.SetBool("tocoSuelo", true);
         }
-
         else
         {
             EstoyCayendo();
         }
     }
+
     public void EstoyCayendo()
     {
         anim.SetBool("tocoSuelo", false);
         anim.SetBool("salte", false);
+    }
+
+    private void AsignarObjetivoEsferas()
+    {
+        Huir[] esferas = FindObjectsOfType<Huir>();
+        foreach (Huir esfera in esferas)
+        {
+            esfera.objetivo = transform; // Asigna al personaje como objetivo para las esferas
+        }
     }
 }
